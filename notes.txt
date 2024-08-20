@@ -1,0 +1,75 @@
+Description:
+- This project aims to implement an ESP32-based control system using 3 buttons and 2 LEDs with various operating modes and state transitions. The system will produce an analog output with a range of 0 to 2048 (12-bit) and provide visual feedback through LEDs based on the system's status.
+
+language :
+- micropython
+
+notes and code rulesets :
+- use nasa 10 rules of programming by default:
+    1. Minimize the number of lines of code.
+    2. Minimize the number of variables.
+    3. Minimize the number of branches.
+    4. Minimize the number of loops.
+    5. Minimize the number of computations.
+    6. Minimize the number of function calls.
+    7. Minimize the number of comments.
+    8. Minimize the number of modules.
+    9. Minimize the number of files.
+    10. Minimize the number of dependencies.
+- Implement Non-Blocking Delays
+- Use Interrupts for Button Presses
+- Debounce the Buttons
+- use indonesian lang on any comment and explanation.
+
+hardware :
+- esp32
+- 3 push button (2 as mode and 1 as direct end)
+- 2 led (begin and top (on going))
+
+States and transitions:
+This system has 4 main states:
+
+1. Standby:
+    - Initial and default state.
+    - analog output: 0.
+    - LEDs: Both LEDs are off.
+    - Sends a ping (every 3 seconds) to the serial port to indicate that the system is running.
+
+2. Begin:
+    - Transition state that lasts for 3.5 seconds.
+    - Mode (linear or exponential) is selected based on the button pressed.
+    - Analog output increases according to the "selected mode" until it reaches the maximum value within this duration.
+    - LEDs: LED 1 turns on following the analog value, LED 2 remains off.
+
+3. On Going:
+    - Main state that lasts for 5 seconds.
+    - Analog output remains at the maximum position.
+    - LEDs: LED 2 turns on, LED 1 is off. LED 2 blinks as 1.5 seconds approaches the end.
+
+4. End:
+    - Final state that lasts for 1.5 seconds.
+    - Analog output decreases exponentially.
+    - LEDs: LED 2 dims following the analog value, LED 1 off.
+
+output :
+- default and fallback states are "standby"
+- analog from 0 to 2048 (12 bit). (make it as smooth as possible)
+- 0 on standy states.
+- serial monitor for logging and moitoring.
+
+visual feedback :
+- 1st led will glow up as the analog val.
+- 2nd led will on when the code are on "on going" states and the 1st led will be off.
+- 2nd led will blink (250ms on/off) when it 1.5s near its end.
+- on end and default the 2 led will off.
+
+controls :
+- if the 1st pb are push it will use the increment method as linear.
+- if the 2st pb are push it will use the increment method as exponential.
+- if the 1st/2nd pb are hold < begin time, it will go back on 0 using exponential method.
+- if the 1st/2nd pb are hold >= begin time, it will continue to the next states (on going).
+- if it on "on going" states:
+    - if the 3rd button are pressed it will direcly go to the next states (end) as exponential.
+    - if the 3rd button are hold, it will direcly end as linear.
+    - If the 1st/2nd pb pressed/hold during Blink state, extends On Going state by one cycle.
+- pb 3 will be aplicable only on "on going" states.
