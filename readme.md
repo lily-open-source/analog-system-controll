@@ -16,7 +16,8 @@
 7. [Serial Monitoring](#serial-monitoring)
 8. [Code Structure](#code-structure)
 9. [Usage](#usage)
-10. [Troubleshooting](#troubleshooting)
+10. [Flowchart](#flowchart)
+11. [Troubleshooting](#troubleshooting)
 
 ## Description
 This project aims to implement an ESP32-based control system using 3 buttons and 2 LEDs with various operating modes and state transitions. The system will produce an analog output with a range of 0 to 2048 (12-bit) and provide visual feedback through LEDs based on the system's status.
@@ -100,6 +101,9 @@ The code is organized as follows:
 2. Upload the MicroPython code to the ESP32 board.
 3. Monitor the serial output to observe the system's "Ping" messages and any other relevant information.
 4. Interact with the system using the 3 buttons to experience the different operating modes and state transitions.
+
+## flowchart
+![flowchart](flowchart.png)
 
 ## Troubleshooting
 If you encounter any issues or have questions, please feel free to reach out to the project maintainers. You can also check the project's issue tracker on the repository for any known problems or solutions.
