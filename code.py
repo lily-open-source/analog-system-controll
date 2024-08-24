@@ -58,13 +58,16 @@ def delay(ms):
     while time.ticks_ms() - start < ms:
         pass
 
-# Main Loop
+# Setup Interrupts
+btn1.irq(trigger=Pin.IRQ_FALLING, handler=btn1_isr)
+btn2.irq(trigger=Pin.IRQ_FALLING, handler=btn2_isr)
+btn3.irq(trigger=Pin.IRQ_FALLING, handler=btn3_isr)
 while True:
     if state == "standby":
         led1.duty(0)
         led2.duty(0)
         print("Standby: Analog Value = 0")
-        delay(3000)
+        delay(1000)
         print("Ping")
 
     elif state == "begin":
