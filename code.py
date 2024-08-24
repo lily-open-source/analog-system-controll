@@ -77,7 +77,6 @@ while True:
         led2.duty(0)
         print("Standby: Analog Value = 0")
         delay(1000)
-        print("Ping")
 
     elif state == "begin":
         led1.duty(0)
