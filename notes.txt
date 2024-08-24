@@ -6,7 +6,7 @@ language :
 
 notes and code rulesets :
 - use nasa 10 rules of programming by default:
-    1. Minimize the number of lines of code.
+    1. Minimize the number of lines of code. (dont use this rules)
     2. Minimize the number of variables.
     3. Minimize the number of branches.
     4. Minimize the number of loops.
@@ -33,10 +33,10 @@ This system has 4 main states:
     - Initial and default state.
     - analog output: 0.
     - LEDs: Both LEDs are off.
-    - Sends a ping (every 3 seconds) to the serial port to indicate that the system is running.
 
 2. Begin:
     - Transition state that lasts for 3.5 seconds.
+    - direct end if presssed less than transitions states time.
     - Mode (linear or exponential) is selected based on the button pressed.
     - Analog output increases according to the "selected mode" until it reaches the maximum value within this duration.
     - LEDs: LED 1 turns on following the analog value, LED 2 remains off.
@@ -55,7 +55,7 @@ output :
 - default and fallback states are "standby"
 - analog from 0 to 2048 (12 bit). (make it as smooth as possible)
 - 0 on standy states.
-- serial monitor for logging and moitoring.
+- serial print for the value.
 
 visual feedback :
 - 1st led will glow up as the analog val.
