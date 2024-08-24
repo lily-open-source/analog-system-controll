@@ -32,7 +32,7 @@ def btn1_isr(pin):
         mode = "linear"
         state = "begin"
         begin_time = ticks_ms()
-    elif state == "on_going" and time.ticks_ms() - end_time <= 1500:
+    elif state == "on_going" and ticks_ms() - end_time <= 1500:
         end_time += 5000
 
 def btn2_isr(pin):
@@ -40,8 +40,8 @@ def btn2_isr(pin):
     if state == "standby":
         mode = "exponential"
         state = "begin"
-        begin_time = time.ticks_ms()
-    elif state == "on_going" and time.ticks_ms() - end_time <= 1500:
+        begin_time = ticks_ms()
+    elif state == "on_going" and ticks_ms() - end_time <= 1500:
         end_time += 5000
 
 def btn3_isr(pin):
@@ -87,27 +87,27 @@ while True:
                 analog_val = int(2048 * (1 - 2 ** (-i / 2048)))
                 delay(3500 / 2048)
         state = "on_going"
-        end_time = time.ticks_ms() + 5000
+        end_time = ticks_ms() + 5000
 
     elif state == "on_going":
         led1.duty(0)
         led2.duty(2047)
         print(f"On Going: Analog Value = {analog_val}")
-        if time.ticks_ms() - end_time >= 1500:
-            led2.duty(int(2047 * (1 - 2 ** (-(time.ticks_ms() - end_time) / 1500))))
+        if ticks_ms() - end_time >= 1500:
+            led2.duty(int(2047 * (1 - 2 ** (-(ticks_ms() - end_time) / 1500))))
         else:
             led2.duty(2047)
             led2.freq(1 / 0.25)
         if btn3.value() == 0 and debounce(btn3):
             state = "end"
-            end_time = time.ticks_ms()
+            end_time = ticks_ms()
         elif btn1.value() == 0 and debounce(btn1) or btn2.value() == 0 and debounce(btn2):
             end_time += 5000
 
     elif state == "end":
         led1.duty(0)
         for i in range(2048, -1, -1):
-            led2.duty(int(2047 * (1 - 2 ** (-(time.ticks_ms() - end_time) / 1500))))
+            led2.duty(int(2047 * (1 - 2 ** (-(ticks_ms() - end_time) / 1500))))
             analog_val = i
             delay(1500 / 2048)
         state = "standby"
