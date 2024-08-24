@@ -1,8 +1,5 @@
-try:
-    import time
-    from machine import Pin, PWM, ticks_ms
-except ImportError:
-    from mock_machine import Pin, PWM, ticks_ms
+import time
+from machine import Pin, PWM, ticks_ms
 
 # Konstanta
 BUTTON1 = 5  # Mode: Linear
@@ -25,19 +22,16 @@ mode = "linear"
 begin_time = ticks_ms()
 end_time = 0
 
-# Interrupt Functions
+# Fungsi Interrupt
 def btn1_isr(pin):
     global state, mode, begin_time
-    print(f"Button {pin} pressed")
     if debounce(pin):
-        print(f"Button {pin} debounce passed")
         if state == "standby":
             mode = "linear"
             state = "begin"
             begin_time = ticks_ms()
-        elif state == "on_going":
-            if ticks_ms() - end_time <= 1500:
-                end_time += 5000
+        elif state == "on_going" and ticks_ms() - end_time <= 1500:
+            end_time += 5000
 
 def btn2_isr(pin):
     global state, mode, begin_time
@@ -46,23 +40,21 @@ def btn2_isr(pin):
             mode = "exponential"
             state = "begin"
             begin_time = ticks_ms()
-        elif state == "on_going":
-            if ticks_ms() - end_time <= 1500:
-                end_time += 5000
+        elif state == "on_going" and ticks_ms() - end_time <= 1500:
+            end_time += 5000
 
 def btn3_isr(pin):
     global state, end_time
-    if debounce(pin):
-        if state == "on_going":
-            state = "end"
-            end_time = ticks_ms()
+    if debounce(pin) and state == "on_going":
+        state = "end"
+        end_time = ticks_ms()
 
-# Debounce Buttons
+# Debounce Tombol
 def debounce(pin):
     time.sleep_ms(50)
     return pin.value() == 0
 
-# Non-Blocking Delay
+# Delay Non-Blok
 def delay(ms):
     start = ticks_ms()
     while ticks_ms() - start < ms:
@@ -72,6 +64,45 @@ def delay(ms):
 btn1.irq(trigger=Pin.IRQ_FALLING, handler=btn1_isr)
 btn2.irq(trigger=Pin.IRQ_FALLING, handler=btn2_isr)
 btn3.irq(trigger=Pin.IRQ_FALLING, handler=btn3_isr)
-while True:
-    print(f"Waiting for button press. Current state: {state}")
-    delay(1000)  # Simple delay to prevent busy-waiting
+
+# Fungsi Utama
+def main_loop():
+    global state, analog_val, end_time
+    while True:
+        if state == "standby":
+            analog_val = 0
+            led1.duty(0)
+            led2.duty(0)
+            print("standby")
+            delay(3000)
+        elif state == "begin":
+            duration = 3500
+            increment = 2048 / duration
+            start_time = ticks_ms()
+            while ticks_ms() - start_time < duration:
+                if mode == "linear":
+                    analog_val += increment
+                elif mode == "exponential":
+                    analog_val = 2048 * (1 - (1 - analog_val / 2048) ** 2)
+                led1.duty(int(analog_val))
+                delay(10)
+            state = "on_going"
+            end_time = ticks_ms() + 5000
+        elif state == "on_going":
+            led1.duty(0)
+            led2.duty(1024)
+            if ticks_ms() >= end_time - 1500:
+                led2.duty(512 if (ticks_ms() // 250) % 2 == 0 else 0)
+            if ticks_ms() >= end_time:
+                state = "end"
+        elif state == "end":
+            duration = 1500
+            decrement = analog_val / duration
+            start_time = ticks_ms()
+            while ticks_ms() - start_time < duration:
+                analog_val -= decrement
+                led2.duty(int(analog_val))
+                delay(10)
+            state = "standby"
+
+main_loop()
