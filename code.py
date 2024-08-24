@@ -1,6 +1,6 @@
-import time
 try:
-    from machine import Pin, PWM
+    import time
+    from machine import Pin, PWM, ticks_ms
 except ImportError:
     from mock_machine import Pin, PWM, ticks_ms
 
