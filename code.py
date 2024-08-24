@@ -28,27 +28,30 @@ end_time = 0
 # Interrupt Functions
 def btn1_isr(pin):
     global state, mode, begin_time
-    if state == "standby":
-        mode = "linear"
-        state = "begin"
-        begin_time = ticks_ms()
-    elif state == "on_going" and ticks_ms() - end_time <= 1500:
-        end_time += 5000
+    if debounce(pin):
+        if state == "standby":
+            mode = "linear"
+            state = "begin"
+            begin_time = ticks_ms()
+        elif state == "on_going" and ticks_ms() - end_time <= 1500:
+            end_time += 5000
 
 def btn2_isr(pin):
     global state, mode, begin_time
-    if state == "standby":
-        mode = "exponential"
-        state = "begin"
-        begin_time = ticks_ms()
-    elif state == "on_going" and ticks_ms() - end_time <= 1500:
-        end_time += 5000
+    if debounce(pin):
+        if state == "standby":
+            mode = "exponential"
+            state = "begin"
+            begin_time = ticks_ms()
+        elif state == "on_going" and ticks_ms() - end_time <= 1500:
+            end_time += 5000
 
 def btn3_isr(pin):
     global state, end_time
-    if state == "on_going":
-        state = "end"
-        end_time = ticks_ms()
+    if debounce(pin):
+        if state == "on_going":
+            state = "end"
+            end_time = ticks_ms()
 
 # Debounce Buttons
 def debounce(pin):
