@@ -35,8 +35,9 @@ def btn1_isr(pin):
             mode = "linear"
             state = "begin"
             begin_time = ticks_ms()
-        elif state == "on_going" and ticks_ms() - end_time <= 1500:
-            end_time += 5000
+        elif state == "on_going":
+            if ticks_ms() - end_time <= 1500:
+                end_time += 5000
 
 def btn2_isr(pin):
     global state, mode, begin_time
@@ -45,8 +46,9 @@ def btn2_isr(pin):
             mode = "exponential"
             state = "begin"
             begin_time = ticks_ms()
-        elif state == "on_going" and ticks_ms() - end_time <= 1500:
-            end_time += 5000
+        elif state == "on_going":
+            if ticks_ms() - end_time <= 1500:
+                end_time += 5000
 
 def btn3_isr(pin):
     global state, end_time
@@ -106,7 +108,7 @@ while True:
         if btn3.value() == 0 and debounce(btn3):
             state = "end"
             end_time = ticks_ms()
-        elif btn1.value() == 0 and debounce(btn1) or btn2.value() == 0 and debounce(btn2):
+        elif (btn1.value() == 0 and debounce(btn1)) or (btn2.value() == 0 and debounce(btn2)):
             end_time += 5000
 
     elif state == "end":
