@@ -1,5 +1,8 @@
 import time
-from machine import Pin, PWM
+try:
+    from machine import Pin, PWM
+except ImportError:
+    from mock_machine import Pin, PWM
 
 # Konstanta
 BUTTON1 = 5  # Mode: Linear
