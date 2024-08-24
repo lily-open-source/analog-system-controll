@@ -28,7 +28,9 @@ end_time = 0
 # Interrupt Functions
 def btn1_isr(pin):
     global state, mode, begin_time
+    print(f"Button {pin} pressed")
     if debounce(pin):
+        print(f"Button {pin} debounce passed")
         if state == "standby":
             mode = "linear"
             state = "begin"
@@ -69,6 +71,7 @@ btn1.irq(trigger=Pin.IRQ_FALLING, handler=btn1_isr)
 btn2.irq(trigger=Pin.IRQ_FALLING, handler=btn2_isr)
 btn3.irq(trigger=Pin.IRQ_FALLING, handler=btn3_isr)
 while True:
+    print(f"Current state: {state}")
     if state == "standby":
         led1.duty(0)
         led2.duty(0)
