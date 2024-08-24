@@ -2,7 +2,7 @@ import time
 try:
     from machine import Pin, PWM
 except ImportError:
-    from mock_machine import Pin, PWM
+    from mock_machine import Pin, PWM, ticks_ms
 
 # Konstanta
 BUTTON1 = 5  # Mode: Linear
@@ -22,7 +22,7 @@ led2 = PWM(Pin(LED2))
 state = "standby"
 analog_val = 0
 mode = "linear"
-begin_time = 0
+begin_time = ticks_ms()
 end_time = 0
 
 # Interrupt Functions
@@ -31,7 +31,7 @@ def btn1_isr(pin):
     if state == "standby":
         mode = "linear"
         state = "begin"
-        begin_time = time.ticks_ms()
+        begin_time = ticks_ms()
     elif state == "on_going" and time.ticks_ms() - end_time <= 1500:
         end_time += 5000
 
@@ -48,7 +48,7 @@ def btn3_isr(pin):
     global state, end_time
     if state == "on_going":
         state = "end"
-        end_time = time.ticks_ms()
+        end_time = ticks_ms()
 
 # Debounce Buttons
 def debounce(pin):
@@ -57,8 +57,8 @@ def debounce(pin):
 
 # Non-Blocking Delay
 def delay(ms):
-    start = time.ticks_ms()
-    while time.ticks_ms() - start < ms:
+    start = ticks_ms()
+    while ticks_ms() - start < ms:
         pass
 
 # Setup Interrupts

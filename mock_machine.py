@@ -1,3 +1,5 @@
+import time
+
 class Pin:
     IN = 0
     OUT = 1
@@ -12,6 +14,9 @@ class Pin:
 
     def value(self):
         return 0
+
+def ticks_ms():
+    return int(time.time() * 1000)
 
 class PWM:
     def __init__(self, pin):
